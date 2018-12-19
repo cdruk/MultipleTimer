@@ -26,172 +26,184 @@ public class MainActivity extends AppCompatActivity
     private long mSecondsElapsed;
 
     @Override
-    protected void onCreate (Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_main);
-        setupToolbar ();
-        setupViewReferences ();
-        setupTimer ();
-        pauseAndResetTimerOnInitialRun (savedInstanceState);
-        setupFAB ();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        setupToolbar();
+        setupViewReferences();
+        setupTimer();
+        pauseAndResetTimerOnInitialRun(savedInstanceState);
+        setupFAB();
     }
 
-    private void setupToolbar ()
+    private void setupToolbar()
     {
-        Toolbar toolbar = findViewById (R.id.toolbar);
-        setSupportActionBar (toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
-    private void setupViewReferences ()
+    private void setupViewReferences()
     {
-        mTextViewSecondsElapsed = findViewById (R.id.tv_seconds_elapsed);
-        fab = findViewById (R.id.fab);
+        mTextViewSecondsElapsed = findViewById(R.id.tv_seconds_elapsed);
+        fab = findViewById(R.id.fab);
     }
 
-    private void setupTimer () {
+    private void setupTimer()
+    {
         // Create the Handler object
-        mHandler = new Handler ();
+        mHandler = new Handler();
 
         // Create the Runnable that, after being called,
         // calls the on timer tick method and then itself one second later, and on and on...
-        mRunnable = new Runnable() {
+        mRunnable = new Runnable()
+        {
             @Override
-            public void run() {
-                onTimerTick ();
+            public void run()
+            {
+                onTimerTick();
                 mHandler.postDelayed(this, 1000);
             }
         };
     }
 
-    private void pauseAndResetTimerOnInitialRun (Bundle savedInstanceState)
+    private void pauseAndResetTimerOnInitialRun(Bundle savedInstanceState)
     {
         // If this is being called on initial run as opposed to due to a device rotation
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
+        {
             mTimerPaused = true;
-            resetTimer ();
+            resetTimer();
         }
     }
 
-    private void resetTimer ()
+    private void resetTimer()
     {
         mSecondsElapsed = 0;
-        updateTextView ();
+        updateTextView();
     }
 
-    private void updateTextView ()
+    private void updateTextView()
     {
         mTextViewSecondsElapsed.setText
-                (String.format (Locale.getDefault(), "%d",mSecondsElapsed));
+                (String.format(Locale.getDefault(), "%d", mSecondsElapsed));
     }
 
-    private void setupFAB ()
+    private void setupFAB()
     {
-        FloatingActionButton fab = findViewById (R.id.fab);
-        fab.setOnClickListener (new View.OnClickListener ()
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick (View view)
+            public void onClick(View view)
             {
-                pauseResumeTimer ();
+                pauseResumeTimer();
             }
         });
     }
 
-    private void pauseResumeTimer ()
+    private void pauseResumeTimer()
     {
-        if (mTimerPaused) {
-            resumeTimer ();
+        if (mTimerPaused)
+        {
+            resumeTimer();
         }
-        else {
-            pauseTimer ();
+        else
+        {
+            pauseTimer();
         }
     }
 
-    private void resumeTimer() {
+    private void resumeTimer()
+    {
         // set flag and then resume timer
         mTimerPaused = false;
         mHandler.postDelayed(mRunnable, 1000);
 
         // change the FAB icon
-        fab.setImageDrawable (
-                ContextCompat.getDrawable(this,android.R.drawable.ic_media_pause));
+        fab.setImageDrawable(
+                ContextCompat.getDrawable(this, android.R.drawable.ic_media_pause));
 
     }
 
-    private void pauseTimer ()
+    private void pauseTimer()
     {
         // change the FAB icon
-        fab.setImageDrawable (
-                ContextCompat.getDrawable(this,android.R.drawable.ic_media_play));
+        fab.setImageDrawable(
+                ContextCompat.getDrawable(this, android.R.drawable.ic_media_play));
 
         // pause timer then set flag
         mHandler.removeCallbacks(mRunnable);
         mTimerPaused = true;
     }
 
-    @Override protected void onResume ()
+    @Override
+    protected void onResume()
     {
-        super.onResume ();
+        super.onResume();
 
         // If the timer was running then resume it
         if (!mTimerPaused)
-            resumeTimer ();
+            resumeTimer();
     }
 
-    @Override protected void onPause ()
+    @Override
+    protected void onPause()
     {
-        super.onPause ();
+        super.onPause();
 
         // If the timer is running then temporarily pause the timer.
         // But then reset the flag to false so that, when the app resumes,
         // it will also resume the timer automatically
-        if (!mTimerPaused) {
-            pauseTimer ();
+        if (!mTimerPaused)
+        {
+            pauseTimer();
             mTimerPaused = false;
         }
     }
     // This is the method that runs after each second has elapsed
 
-    private void onTimerTick ()
+    private void onTimerTick()
     {
         mSecondsElapsed++;
-        updateTextView ();
+        updateTextView();
     }
 
     @Override
-    public boolean onCreateOptionsMenu (Menu menu)
+    public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater ().inflate (R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item)
+    public boolean onOptionsItemSelected(MenuItem item)
     {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId ();
+        int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.reset_timer) {
-            resetTimer ();
+        if (id == R.id.reset_timer)
+        {
+            resetTimer();
             return true;
         }
 
-        return super.onOptionsItemSelected (item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
         super.onRestoreInstanceState(savedInstanceState);
 
 
         // get saved elapsed seconds and put this into the EditText
         mSecondsElapsed = (long) savedInstanceState.get("SECONDS_ELAPSED");
-        updateTextView ();
+        updateTextView();
 
         // get saved timer status
         mTimerPaused = savedInstanceState.getBoolean("TIMER_PAUSED");
@@ -200,7 +212,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState)
+    {
         super.onSaveInstanceState(outState);
         outState.putLong("SECONDS_ELAPSED", mSecondsElapsed);
         outState.putBoolean("TIMER_PAUSED", mTimerPaused);
